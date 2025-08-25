@@ -1,10 +1,9 @@
 // src/app/page.tsx
-import { getSortedPostsData } from '../app/lib/posts';
+import { getSortedPostsData } from '../lib/posts';
 import Link from 'next/link';
+import Image from 'next/image'; // Import the Next.js Image component
 
-// The Home component is now an async function
 export default async function Home() {
-  // We await the data from Contentful
   const allPostsData = await getSortedPostsData();
 
   return (
@@ -17,18 +16,31 @@ export default async function Home() {
       <section>
         <h2 className="text-3xl font-bold mb-8 border-b pb-4">Latest Posts</h2>
         <div className="grid gap-8">
-          {allPostsData.map(({ id, title, slug, excerpt }) => (
-            <div key={id} className="border rounded-lg p-6 hover:shadow-lg transition-shadow">
-              <h3 className="text-2xl font-bold mb-2">
-                {/* The Link now points to the correct slug-based URL */}
-                <Link href={`/posts/${slug}`} className="text-blue-700 hover:underline">
-                  {title}
+          {allPostsData.map(({ id, title, slug, excerpt, coverImage }) => (
+            <div key={id} className="border rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
+              {coverImage && (
+                <Link href={`/posts/${slug}`}>
+                  <div className="relative h-64 w-full">
+                    <Image
+                      src={coverImage.url}
+                      alt={coverImage.alt}
+                      fill // Makes the image fill the parent container
+                      style={{ objectFit: 'cover' }} // Equivalent to object-cover in Tailwind
+                    />
+                  </div>
                 </Link>
-              </h3>
-              <p className="text-gray-700 mb-4">{excerpt}</p>
-              <Link href={`/posts/${slug}`} className="text-blue-600 font-semibold hover:text-blue-800">
-                Read more →
-              </Link>
+              )}
+              <div className="p-6">
+                <h3 className="text-2xl font-bold mb-2">
+                  <Link href={`/posts/${slug}`} className="text-blue-700 hover:underline">
+                    {title}
+                  </Link>
+                </h3>
+                <p className="text-gray-700 mb-4">{excerpt}</p>
+                <Link href={`/posts/${slug}`} className="text-blue-600 font-semibold hover:text-blue-800">
+                  Read more →
+                </Link>
+              </div>
             </div>
           ))}
         </div>

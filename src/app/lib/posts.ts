@@ -1,5 +1,5 @@
 // src/lib/posts.ts
-import { createClient } from 'contentful';
+import { createClient, Asset } from 'contentful';
 import { Document } from '@contentful/rich-text-types';
 
 export interface BlogPostSkeleton {
@@ -9,6 +9,7 @@ export interface BlogPostSkeleton {
     slug: string;
     excerpt: string;
     content: Document;
+    coverImage?: Asset; // Make coverImage optional
   }
 }
 
@@ -16,6 +17,19 @@ const client = createClient({
   space: process.env.CONTENTFUL_SPACE_ID as string,
   accessToken: process.env.CONTENTFUL_ACCESS_TOKEN as string,
 });
+
+// A helper function to extract image data
+function parseCoverImage(imageField?: Asset) {
+  if (imageField) {
+    return {
+      url: 'https:' + imageField.fields.file.url,
+      width: imageField.fields.file.details.image?.width,
+      height: imageField.fields.file.details.image?.height,
+      alt: imageField.fields.title,
+    };
+  }
+  return null;
+}
 
 export async function getSortedPostsData() {
   const entries = await client.getEntries<BlogPostSkeleton>({
@@ -29,12 +43,12 @@ export async function getSortedPostsData() {
       title: item.fields.title,
       slug: item.fields.slug,
       excerpt: item.fields.excerpt,
+      coverImage: parseCoverImage(item.fields.coverImage),
     }));
   }
   return [];
 }
 
-// This function will fetch a single blog post by its slug
 export async function getPostData(slug: string) {
     /* eslint-disable @typescript-eslint/no-explicit-any */
     const entries = await client.getEntries<BlogPostSkeleton>({
@@ -51,11 +65,13 @@ export async function getPostData(slug: string) {
             title: post.fields.title,
             slug: post.fields.slug,
             content: post.fields.content,
+            coverImage: parseCoverImage(post.fields.coverImage),
         };
     }
     return null;
 }
 
+// ... getAllPostSlugs remains the same
 export async function getAllPostSlugs() {
   const entries = await client.getEntries<BlogPostSkeleton>({
     content_type: 'blognext',
