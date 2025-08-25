@@ -55,8 +55,9 @@ export async function getPostData(slug: string) {
     }
     return null;
 }
-
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function getAllPostSlugs() {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const entries = await client.getEntries<BlogPostSkeleton>({
     content_type: 'blognext',
     select: ['fields.slug'],
