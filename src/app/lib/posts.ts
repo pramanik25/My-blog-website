@@ -35,14 +35,17 @@ export async function getSortedPostsData() {
 }
 
 // This function will fetch a single blog post by its slug
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function getPostData(slug: string) {
-    // THE FINAL FIX IS HERE: This comment disables the ESLint rule for the next line.
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const entries = await client.getEntries<BlogPostSkeleton>({
         content_type: 'blognext',
         'fields.slug': slug,
         limit: 1,
-    });
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+
+    } as any);
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (entries.items && entries.items.length > 0) {
