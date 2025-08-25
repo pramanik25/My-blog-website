@@ -36,14 +36,16 @@ export async function getSortedPostsData() {
 
 // This function will fetch a single blog post by its slug
 export async function getPostData(slug: string) {
-    // THE FIX IS HERE: We nest the slug query inside a 'fields' object.
+    // THE FIX IS HERE: We use the correct flat query syntax for the API,
+    // and use 'as any' to bypass the strict TypeScript error.
     const entries = await client.getEntries<BlogPostSkeleton>({
         content_type: 'blognext',
-        fields: { slug: slug },
+        'fields.slug': slug,
         limit: 1,
-    });
+    } as any);
 
-    if (entries.items && entries.items.length > o) {
+    // I also fixed a small typo in the line below ('o' is now '0')
+    if (entries.items && entries.items.length > 0) {
         const post = entries.items[0];
         return {
             id: post.sys.id,
