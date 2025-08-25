@@ -1,4 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// src/lib/posts.ts
 import { createClient } from 'contentful';
 import { Document } from '@contentful/rich-text-types';
 
@@ -44,6 +44,7 @@ export async function getPostData(slug: string) {
         limit: 1,
     } as any);
 
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (entries.items && entries.items.length > 0) {
         const post = entries.items[0];
         return {
@@ -55,9 +56,8 @@ export async function getPostData(slug: string) {
     }
     return null;
 }
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+
 export async function getAllPostSlugs() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const entries = await client.getEntries<BlogPostSkeleton>({
     content_type: 'blognext',
     select: ['fields.slug'],
