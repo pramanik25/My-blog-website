@@ -17,11 +17,9 @@ const client = createClient({
   accessToken: process.env.CONTENTFUL_ACCESS_TOKEN as string,
 });
 
-// This function will fetch a list of blog posts for the homepage
 export async function getSortedPostsData() {
   const entries = await client.getEntries<BlogPostSkeleton>({
     content_type: 'blognext',
-    // FIX IS HERE
     order: ['-sys.createdAt'],
   });
 
@@ -38,13 +36,14 @@ export async function getSortedPostsData() {
 
 // This function will fetch a single blog post by its slug
 export async function getPostData(slug: string) {
+    // THE FIX IS HERE: We nest the slug query inside a 'fields' object.
     const entries = await client.getEntries<BlogPostSkeleton>({
         content_type: 'blognext',
-        'fields.slug': slug,
+        fields: { slug: slug },
         limit: 1,
     });
 
-    if (entries.items && entries.items.length > 0) {
+    if (entries.items && entries.items.length > o) {
         const post = entries.items[0];
         return {
             id: post.sys.id,
@@ -56,11 +55,9 @@ export async function getPostData(slug: string) {
     return null;
 }
 
-// This function fetches only the slugs for all posts
 export async function getAllPostSlugs() {
   const entries = await client.getEntries<BlogPostSkeleton>({
     content_type: 'blognext',
-    // FIX IS HERE
     select: ['fields.slug'],
   });
 
