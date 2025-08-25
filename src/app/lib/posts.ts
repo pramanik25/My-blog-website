@@ -42,7 +42,7 @@ export async function getPostData(slug: string) {
         content_type: 'blognext',
         'fields.slug': slug,
         limit: 1,
-    } as any);
+    });
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     if (entries.items && entries.items.length > 0) {
