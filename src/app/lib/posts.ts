@@ -34,13 +34,15 @@ export async function getSortedPostsData() {
   return [];
 }
 
+// This function will fetch a single blog post by its slug
 export async function getPostData(slug: string) {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    /* eslint-disable @typescript-eslint/no-explicit-any */
     const entries = await client.getEntries<BlogPostSkeleton>({
         content_type: 'blognext',
         'fields.slug': slug,
         limit: 1,
-    } as any); 
+    } as any);
+    /* eslint-enable @typescript-eslint/no-explicit-any */
 
     if (entries.items && entries.items.length > 0) {
         const post = entries.items[0];
