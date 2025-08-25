@@ -1,4 +1,4 @@
-// src/lib/posts.ts
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 import { createClient } from 'contentful';
 import { Document } from '@contentful/rich-text-types';
 
