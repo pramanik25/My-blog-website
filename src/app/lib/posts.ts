@@ -1,34 +1,34 @@
 // src/lib/posts.ts
-import { createClient, ContentfulClientApi, Entry } from 'contentful';
+import { createClient } from 'contentful'; // We remove 'Entry' because it was unused
 import { Document } from '@contentful/rich-text-types';
 
-// This is the key change: We define the shape of our content type.
-// This provides strong types and autocompletion.
 export interface BlogPostSkeleton {
   contentTypeId: 'Blognext',
   fields: {
     title: string;
     slug: string;
     excerpt: string;
-    content: Document; // The type for Rich Text fields
+    content: Document;
   }
 }
 
-const client: ContentfulClientApi = createClient({
+// THE FIX IS HERE:
+// We remove the ': ContentfulClientApi' part and let TypeScript infer the type.
+const client = createClient({
   space: process.env.CONTENTFUL_SPACE_ID as string,
   accessToken: process.env.CONTENTFUL_ACCESS_TOKEN as string,
 });
 
+// All the functions below remain exactly the same.
+
 // This function will fetch a list of blog posts for the homepage
 export async function getSortedPostsData() {
-  // We use the skeleton here to tell the client what kind of entries to fetch
   const entries = await client.getEntries<BlogPostSkeleton>({
     content_type: 'Blognext',
     order: '-sys.createdAt',
   });
 
   if (entries.items) {
-    // The 'item' is now strongly typed, no more 'any'!
     return entries.items.map((item) => ({
       id: item.sys.id,
       title: item.fields.title,
@@ -48,7 +48,6 @@ export async function getPostData(slug: string) {
     });
 
     if (entries.items && entries.items.length > 0) {
-        // The 'post' variable is now strongly typed
         const post = entries.items[0];
         return {
             id: post.sys.id,
@@ -68,7 +67,6 @@ export async function getAllPostSlugs() {
   });
 
   if (entries.items) {
-    // The 'item' is now strongly typed
     return entries.items.map((item) => ({
       slug: item.fields.slug,
     }));
