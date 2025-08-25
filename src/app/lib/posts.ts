@@ -1,9 +1,9 @@
 // src/lib/posts.ts
-import { createClient } from 'contentful'; // We remove 'Entry' because it was unused
+import { createClient } from 'contentful';
 import { Document } from '@contentful/rich-text-types';
 
 export interface BlogPostSkeleton {
-  contentTypeId: 'Blognext',
+  contentTypeId: 'blognext',
   fields: {
     title: string;
     slug: string;
@@ -12,20 +12,17 @@ export interface BlogPostSkeleton {
   }
 }
 
-// THE FIX IS HERE:
-// We remove the ': ContentfulClientApi' part and let TypeScript infer the type.
 const client = createClient({
   space: process.env.CONTENTFUL_SPACE_ID as string,
   accessToken: process.env.CONTENTFUL_ACCESS_TOKEN as string,
 });
 
-// All the functions below remain exactly the same.
-
 // This function will fetch a list of blog posts for the homepage
 export async function getSortedPostsData() {
   const entries = await client.getEntries<BlogPostSkeleton>({
-    content_type: 'Blognext',
-    order: '-sys.createdAt',
+    content_type: 'blognext',
+    // FIX IS HERE
+    order: ['-sys.createdAt'],
   });
 
   if (entries.items) {
@@ -42,7 +39,7 @@ export async function getSortedPostsData() {
 // This function will fetch a single blog post by its slug
 export async function getPostData(slug: string) {
     const entries = await client.getEntries<BlogPostSkeleton>({
-        content_type: 'Blognext',
+        content_type: 'blognext',
         'fields.slug': slug,
         limit: 1,
     });
@@ -62,8 +59,9 @@ export async function getPostData(slug: string) {
 // This function fetches only the slugs for all posts
 export async function getAllPostSlugs() {
   const entries = await client.getEntries<BlogPostSkeleton>({
-    content_type: 'Blognext',
-    select: 'fields.slug',
+    content_type: 'blognext',
+    // FIX IS HERE
+    select: ['fields.slug'],
   });
 
   if (entries.items) {
